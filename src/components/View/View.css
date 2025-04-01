@@ -1,0 +1,7 @@
+.View {
+  display: none;
+}
+
+.View.show {
+  display: block;
+}
