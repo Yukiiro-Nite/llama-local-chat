@@ -39,3 +39,7 @@
   color: var(--accent);
   font-size: 0.75rem;
 }
+
+.ChatView ul li div.ChatMsg {
+  white-space: pre-wrap;
+}

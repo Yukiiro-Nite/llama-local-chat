@@ -1,3 +1,4 @@
+import { useEffect, useRef } from "react"
 import { Chat, ChatRoleType } from "../../stores/ChatStore"
 
 export interface ChatListProps {
@@ -11,9 +12,17 @@ const roleTitles: Record<ChatRoleType, (chat: Chat) => string> = {
 }
 
 export const ChatList = ({ chat }: ChatListProps) => {
+  const chatAnchorRef = useRef<HTMLLIElement>(null)
+
+  useEffect(() => {
+    if (chatAnchorRef.current) {
+      chatAnchorRef.current.scrollIntoView({ behavior: 'smooth' })
+    }
+  }, [chat])
+
   return (
-    <ul>
-      {chat.chatHistory.length === 0 && <li>No chat messages</li>}
+    <ul key={chat.id}>
+      {chat.chatHistory.length === 0 && <li><h2>No chat messages</h2></li>}
       {chat.chatHistory.map((msg) => {
         const title = roleTitles[msg.role](chat)
         const createdAt = new Date(msg.createdAt).toLocaleString()
@@ -21,10 +30,11 @@ export const ChatList = ({ chat }: ChatListProps) => {
           <li key={`${chat.id}-${msg.createdAt}`}>
             <h2>{title}</h2>
             <time>{createdAt}</time>
-            <div>{msg.content}</div>
+            <div className="ChatMsg">{msg.content}</div>
           </li>
         )
       })}
+      <li ref={chatAnchorRef}></li>
     </ul>
   )
 }
