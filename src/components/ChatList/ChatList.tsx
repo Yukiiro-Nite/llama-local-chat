@@ -1,5 +1,6 @@
 import { useEffect, useRef } from "react"
 import { Chat, ChatRoleType } from "../../stores/ChatStore"
+import { compiler } from "markdown-to-jsx"
 
 export interface ChatListProps {
   chat: Chat
@@ -26,11 +27,12 @@ export const ChatList = ({ chat }: ChatListProps) => {
       {chat.chatHistory.map((msg) => {
         const title = roleTitles[msg.role](chat)
         const createdAt = new Date(msg.createdAt).toLocaleString()
+        const contentMd = compiler(msg.content, { wrapper: null })
         return (
           <li key={`${chat.id}-${msg.createdAt}`}>
             <h2>{title}</h2>
             <time>{createdAt}</time>
-            <div className="ChatMsg">{msg.content}</div>
+            <div className="ChatMsg">{contentMd}</div>
           </li>
         )
       })}

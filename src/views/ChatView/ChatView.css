@@ -18,28 +18,28 @@
   margin: 1rem 0 0 0;
 }
 
-.ChatView ul {
+.ChatView > ul {
   padding: 90px 1rem;
   margin-top: 0;
   max-width: 35rem;
 }
 
-.ChatView ul li {
+.ChatView > ul > li {
   display: flex;
   flex-direction: column;
   align-items: flex-start;
   gap: 0.5rem;
 }
 
-.ChatView ul li h2 {
+.ChatView > ul > li > h2 {
   margin: 2rem 0 0 0;
 }
 
-.ChatView ul li time {
+.ChatView > ul > li > time {
   color: var(--accent);
   font-size: 0.75rem;
 }
 
-.ChatView ul li div.ChatMsg {
+.ChatView > ul > li > div.ChatMsg {
   white-space: pre-wrap;
 }

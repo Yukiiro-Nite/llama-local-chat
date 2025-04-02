@@ -20,6 +20,10 @@
   border: 1px solid var(--accent);
 }
 
+.ChatInput form textarea:disabled {
+  color: #888888;
+}
+
 .ChatInput form button {
   border: 1px solid var(--accent);
   background-color: var(--bg);
