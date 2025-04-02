@@ -2,6 +2,7 @@ import { useCallback } from "react"
 import { View } from "../../components/View/View"
 import { AppViews, useAppStore } from "../../stores/AppStore"
 import { useChatStore } from "../../stores/ChatStore"
+import './StartMenu.css'
 
 export const StartMenu = () => {
   const setView = useAppStore((state) => state.setView)

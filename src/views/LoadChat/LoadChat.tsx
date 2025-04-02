@@ -2,6 +2,7 @@ import { useCallback } from "react"
 import { View } from "../../components/View/View"
 import { AppViews, useAppStore } from "../../stores/AppStore"
 import { useChatStore } from "../../stores/ChatStore"
+import './LoadChat.css'
 
 export const LoadChat = () => {
   const setView = useAppStore((state) => state.setView)
@@ -34,11 +35,14 @@ export const LoadChat = () => {
       <ul>
         {
           Object.values(chats).map((chat) => {
+            const createdAt = new Date(chat.createdAt).toLocaleString()
+            const updatedAt = new Date(chat.updatedAt).toLocaleString()
+
             return (
               <li key={chat.id}>
                 <h2>{chat.chatSettings.title}</h2>
-                <time>Created at: {chat.createdAt}</time>
-                <time>Updated at: {chat.updatedAt}</time>
+                <time>Created at: {createdAt}</time>
+                <time>Updated at: {updatedAt}</time>
                 <button onClick={() => handleLoadChat(chat.id)}>Load</button>
                 <button onClick={() => handleDeleteChat(chat.id)}>Delete</button>
               </li>

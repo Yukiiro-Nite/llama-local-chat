@@ -2,6 +2,7 @@ import { FormEvent, useCallback, useMemo } from "react"
 import { View } from "../../components/View/View"
 import { AppViews, useAppStore } from "../../stores/AppStore"
 import { useChatStore } from "../../stores/ChatStore"
+import "./ChatSettings.css"
 
 export interface ChatSettingsFormElements extends HTMLFormControlsCollection {
   title: HTMLInputElement
@@ -81,6 +82,7 @@ export const ChatSettings = () => {
           <span>System Message</span>
           <textarea
             name="systemMessage"
+            rows={5}
             defaultValue={settings?.systemMessage}
           ></textarea>
         </label>

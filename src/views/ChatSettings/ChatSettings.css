@@ -1,0 +1,52 @@
+.ChatSettings header {
+  position: fixed;
+  border-bottom: 1px solid var(--accent);
+  width: 100%;
+  padding: 0.5rem;
+  background-color: var(--bg);
+}
+
+.ChatSettings header button {
+  border: 1px solid var(--accent);
+  background-color: var(--bg);
+  padding: 0.5rem;
+  font-size: 2rem;
+  margin: 0;
+}
+
+.ChatSettings header h1 {
+  margin: 1rem 0 0 0;
+}
+
+.ChatSettings form {
+  padding-top: 132px;
+  margin-top: 0;
+  margin-left: 1rem;
+  max-width: 35rem;
+}
+
+.ChatSettings form label {
+  display: block;
+  margin-bottom: 1rem;
+}
+
+.ChatSettings form label span {
+  display: block;
+  font-weight: bold;
+}
+
+.ChatSettings form label input,
+.ChatSettings form label textarea {
+  color: var(--fg);
+  background-color: var(--bg);
+  border: 1px solid var(--accent);
+}
+
+.ChatSettings form button {
+  border: 1px solid var(--accent);
+  background-color: var(--bg);
+  padding: 0.5rem 1.5rem;
+  font-size: 1.5rem;
+  color: var(--fg);
+  margin-top: 2rem;
+}

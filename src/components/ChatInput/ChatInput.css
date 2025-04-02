@@ -1,0 +1,30 @@
+.ChatInput {
+  width: calc(100% - 2rem);
+  position: fixed;
+  bottom: 0;
+  border-top: 1px solid var(--accent);
+  padding: 0.5rem 1rem;
+  background-color: var(--bg);
+}
+
+.ChatInput form {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.ChatInput form textarea {
+  flex: auto;
+  color: var(--fg);
+  background-color: var(--bg);
+  border: 1px solid var(--accent);
+}
+
+.ChatInput form button {
+  border: 1px solid var(--accent);
+  background-color: var(--bg);
+  padding: 0.25rem;
+  font-size: 2rem;
+  line-height: 1;
+  margin: 0;
+}

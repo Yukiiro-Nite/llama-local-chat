@@ -1,5 +1,6 @@
 import { FormEvent, useCallback, useState } from "react"
 import { Chat, ChatMessage, ChatRoles, useChatStore } from "../../stores/ChatStore"
+import "./ChatInput.css"
 
 interface ChatInputFormElements extends HTMLFormControlsCollection {
   message: HTMLTextAreaElement
@@ -85,11 +86,12 @@ export const ChatInput = ({ chat }: ChatInputProps) => {
   }, [appendChatHistory, chat.chatSettings, chat.id])
 
   return (
-    <div>
+    <div className="ChatInput">
       <form onSubmit={handleSubmit}>
         <textarea
           name="message"
           disabled={requestStatus.loading}
+          rows={4}
         ></textarea>
         <button>✉️</button>
       </form>

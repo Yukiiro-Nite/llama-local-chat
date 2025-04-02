@@ -4,6 +4,7 @@ import { ChatList } from "../../components/ChatList/ChatList"
 import { View } from "../../components/View/View"
 import { AppViews, useAppStore } from "../../stores/AppStore"
 import { useChatStore } from "../../stores/ChatStore"
+import "./ChatView.css"
 
 export const ChatView = () => {
   const setView = useAppStore((state) => state.setView)

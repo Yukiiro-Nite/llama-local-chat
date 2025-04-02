@@ -1,0 +1,25 @@
+.View.StartMenu.show {
+  display: flex;
+}
+
+.StartMenu {
+  flex-direction: column;
+  align-items: center;
+}
+
+.StartMenu button {
+  border: none;
+  background: transparent;
+  color: var(--fg);
+  font-family: monospace;
+  font-size: 2rem;
+  text-decoration: underline;
+}
+
+.StartMenu button:hover::before,
+.StartMenu button:active::before,
+.StartMenu button:focus::before {
+  position: absolute;
+  content: ">";
+  margin-left: -2rem;
+}
