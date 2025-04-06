@@ -1,13 +1,6 @@
 import { create } from 'zustand'
 import { persist } from 'zustand/middleware'
-
-export type ChatRoleType = 'user' | 'assistant' | 'system'
-
-export const ChatRoles: Record<ChatRoleType, ChatRoleType> = {
-  user: 'user',
-  assistant: 'assistant',
-  system: 'system'
-}
+import { ChatRoleType } from '../api/llama.types'
 
 export interface ChatMessage {
   role: ChatRoleType

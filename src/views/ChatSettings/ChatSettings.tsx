@@ -3,6 +3,7 @@ import { View } from "../../components/View/View"
 import { AppViews, useAppStore } from "../../stores/AppStore"
 import { useChatStore } from "../../stores/ChatStore"
 import "./ChatSettings.css"
+import { ModelSelect } from "../../components/ModelSelect/ModelSelect"
 
 export interface ChatSettingsFormElements extends HTMLFormControlsCollection {
   title: HTMLInputElement
@@ -44,6 +45,13 @@ export const ChatSettings = () => {
     updateChatSettings(currentChatId, settingsUpdate)
   }, [currentChatId, updateChatSettings])
 
+  const handleSetModel = useCallback((model: string) => {
+    if (!currentChatId) {
+      return
+    }
+    updateChatSettings(currentChatId, { model })
+  }, [currentChatId, updateChatSettings])
+
   return (
     <View
       type={AppViews.chatSettings}
@@ -71,13 +79,11 @@ export const ChatSettings = () => {
             defaultValue={settings?.host}
           ></input>
         </label>
-        <label>
-          <span>Model</span>
-          <input
-            name="model"
-            defaultValue={settings?.model}
-          ></input>
-        </label>
+        <ModelSelect
+          modelSetting={settings?.model}
+          hostSetting={settings?.host}
+          setModel={handleSetModel}
+        ></ModelSelect>
         <label>
           <span>System Message</span>
           <textarea

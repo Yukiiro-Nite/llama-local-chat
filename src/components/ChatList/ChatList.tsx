@@ -1,6 +1,7 @@
 import { useEffect, useRef } from "react"
-import { Chat, ChatRoleType } from "../../stores/ChatStore"
+import { Chat } from "../../stores/ChatStore"
 import { compiler } from "markdown-to-jsx"
+import { ChatRoleType } from "../../api/llama.types"
 
 export interface ChatListProps {
   chat: Chat

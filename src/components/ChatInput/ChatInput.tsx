@@ -1,6 +1,8 @@
 import { FormEvent, useCallback, useState } from "react"
-import { Chat, ChatMessage, ChatRoles, useChatStore } from "../../stores/ChatStore"
+import { Chat, ChatMessage, useChatStore } from "../../stores/ChatStore"
 import "./ChatInput.css"
+import { ChatRoles } from "../../api/llama.types"
+import { getChat } from "../../api/llama"
 
 interface ChatInputFormElements extends HTMLFormControlsCollection {
   message: HTMLTextAreaElement
@@ -46,33 +48,25 @@ export const ChatInput = ({ chat }: ChatInputProps) => {
     }
 
     setRequestStatus({loading: true})
-    const response = await fetch(
-      `${settings.host}/api/chat`,
-      {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Accept': 'application/json'
-        },
-        body: JSON.stringify({
-          model: settings.model,
-          stream: false,
-          messages: requestHistory
-        })
-      }
-    )
-
-    if (response.status !== 200) {
+    let chatResponse
+    try {
+      chatResponse = await getChat(
+        settings.host,
+        settings.model,
+        requestHistory
+      )
+    } catch (res) {
+      const response = res as Response
       const error = await response.text()
       console.error('Problem getting chat response: ', response.status, error)
       setRequestStatus({ loading: false, error })
+      return
     }
 
-    const rawData = await response.json()
-    const responseMessage = rawData?.message
+    const responseMessage = chatResponse.message
 
     if (!responseMessage) {
-      console.error('No message in response', rawData)
+      console.error('No message in response', chatResponse)
       setRequestStatus({ loading: false, error: 'No message in response' })
     }
 
