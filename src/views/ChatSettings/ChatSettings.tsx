@@ -1,4 +1,4 @@
-import { FormEvent, useCallback, useMemo } from "react"
+import { FormEvent, useCallback, useMemo, useRef } from "react"
 import { View } from "../../components/View/View"
 import { AppViews, useAppStore } from "../../stores/AppStore"
 import { useChatStore } from "../../stores/ChatStore"
@@ -15,6 +15,7 @@ export interface ChatSettingsFormElements extends HTMLFormControlsCollection {
 
 export const ChatSettings = () => {
   const setView = useAppStore((state) => state.setView)
+  const formRef = useRef<HTMLFormElement>(null)
   const {chats, currentChatId, updateChatSettings} = useChatStore()
   const settings = useMemo(() => {
     return currentChatId
@@ -24,15 +25,16 @@ export const ChatSettings = () => {
   const handleGoBack = useCallback(() => {
     setView(AppViews.chatView)
   }, [setView])
-  const handleSettingsSave = useCallback((event: FormEvent) => {
-    event.preventDefault()
+  
+  const handleSettingsSave = useCallback(() => {
+    if (!formRef.current) return
 
     if (!currentChatId) {
       console.error('No chat id set, can not update settings')
       return
     }
 
-    const target = event.target as HTMLFormElement
+    const target = formRef.current
     const elements = target.elements as ChatSettingsFormElements
     const settingsUpdate = {
       title: elements.title.value,
@@ -42,8 +44,16 @@ export const ChatSettings = () => {
       historyLength: parseInt(elements.historyLength.value)
     }
 
+    console.info(currentChatId, settingsUpdate)
     updateChatSettings(currentChatId, settingsUpdate)
   }, [currentChatId, updateChatSettings])
+
+  const handleSubmit = useCallback(function (event: FormEvent) {
+    event.preventDefault()
+    if (!formRef.current) return
+
+    handleSettingsSave()
+  }, [handleSettingsSave])
 
   const handleSetModel = useCallback((model: string) => {
     if (!currentChatId) {
@@ -64,7 +74,12 @@ export const ChatSettings = () => {
         >🔙</button>
         <h1>Chat Settings</h1>
       </header>
-      <form key={currentChatId} onSubmit={handleSettingsSave}>
+      <form
+        key={currentChatId}
+        onSubmit={handleSubmit}
+        onChange={handleSettingsSave}
+        ref={formRef}
+      >
         <label>
           <span>Title</span>
           <input
@@ -100,7 +115,6 @@ export const ChatSettings = () => {
             defaultValue={settings?.historyLength}
           ></input>
         </label>
-        <button>💾 Save</button>
       </form>
     </View>
   )
