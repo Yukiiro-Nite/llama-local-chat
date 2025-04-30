@@ -57,7 +57,7 @@ export const getModel = async (
   host: string,
   model: string
 ): Promise<ModelLongData> => {
-  const path = `${host}/api/tags`
+  const path = `${host}/api/show`
   const response = await fetch(
     path,
     {

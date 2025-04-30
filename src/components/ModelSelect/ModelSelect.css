@@ -1,0 +1,7 @@
+.LoadingIndicator {
+  display: none;
+}
+
+.LoadingIndicator.show {
+  display: block;
+}
