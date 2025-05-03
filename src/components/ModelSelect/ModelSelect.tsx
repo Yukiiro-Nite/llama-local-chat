@@ -55,6 +55,11 @@ export const ModelSelect = (props: ModelSelectProps) => {
     setModel(value)
   }, [setModel])
 
+  const refreshModels = useCallback(() => {
+    setModelsRequestState({loading: false})
+    setModelInfoRequestState({})
+  }, [])
+
   useEffect(() => {
     const modelsNeedUpdate = !modelsRequestState.loading
       && !modelsRequestState.data
@@ -104,22 +109,29 @@ export const ModelSelect = (props: ModelSelectProps) => {
   }, [hostSetting, modelInfoRequestState, modelSetting])
 
   return (
-    <label>
+    <label className="ModelSelect" htmlFor="model">
       <span>Model</span>
-      <select
-        name="model"
-        value={modelSetting}
-        onChange={_setModel}
-      >
-        {
-          modelsRequestState.data?.map((model) => {
-            return (
-              <option key={model.name} value={model.name}>{model.name}</option>
-            )
-          })
-        }
-      </select>
-      <dl>
+      <div className="SelectWrapper">
+        <select
+          name="model"
+          value={modelSetting}
+          onChange={_setModel}
+        >
+          {
+            modelsRequestState.data?.map((model) => {
+              return (
+                <option key={model.name} value={model.name}>{model.name}</option>
+              )
+            })
+          }
+        </select>
+        <button
+          className="RefreshButton"
+          type="button"
+          onClick={refreshModels}
+        >🔁</button>
+      </div>
+      <dl className="ModelDetails">
         <dd className={classNames('LoadingIndicator', {show: currentModelInfo.loading})}>Loading</dd>
         <dt>Capabilities:</dt>
         <dd>{currentModelInfo?.data?.capabilities?.join(', ')}</dd>

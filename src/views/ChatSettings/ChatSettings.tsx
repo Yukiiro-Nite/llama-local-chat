@@ -44,7 +44,6 @@ export const ChatSettings = () => {
       historyLength: parseInt(elements.historyLength.value)
     }
 
-    console.info(currentChatId, settingsUpdate)
     updateChatSettings(currentChatId, settingsUpdate)
   }, [currentChatId, updateChatSettings])
 

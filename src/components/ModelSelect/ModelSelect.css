@@ -1,7 +1,22 @@
-.LoadingIndicator {
+.ModelSelect .LoadingIndicator {
   display: none;
 }
 
-.LoadingIndicator.show {
+.ModelSelect .LoadingIndicator.show {
   display: block;
+}
+
+.ModelSelect .SelectWrapper {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.ModelSelect .SelectWrapper .RefreshButton {
+  margin: 0;
+  padding: 0.25rem;
+}
+
+.ModelSelect .ModelDetails {
+  margin-top: 0;
 }
