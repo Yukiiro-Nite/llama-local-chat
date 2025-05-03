@@ -1,4 +1,4 @@
-import { FormEvent, useCallback, useState } from "react"
+import { FormEvent, KeyboardEvent, useCallback, useRef, useState } from "react"
 import { Chat, ChatMessage, useChatStore } from "../../stores/ChatStore"
 import "./ChatInput.css"
 import { ChatRoles } from "../../api/llama.types"
@@ -18,6 +18,8 @@ export interface ChatRequestStatus {
 }
 
 export const ChatInput = ({ chat }: ChatInputProps) => {
+  const formRef = useRef<HTMLFormElement>(null)
+  const textAreaRef = useRef<HTMLTextAreaElement>(null)
   const [requestStatus, setRequestStatus] = useState<ChatRequestStatus>({loading: false})
   const appendChatHistory = useChatStore((state) => state.appendChatHistory)
   const handleSubmit = useCallback(async (event: FormEvent) => {
@@ -77,15 +79,29 @@ export const ChatInput = ({ chat }: ChatInputProps) => {
     })
     setRequestStatus({ loading: false, error: undefined })
     target.reset()
+    setTimeout(() => textAreaRef.current?.focus())
   }, [appendChatHistory, chat.chatSettings, chat.id])
+
+  const handleKey = useCallback((event: KeyboardEvent) => {
+    const needsSubmit = (event.key === "Enter" || event.key === "NumpadEnter")
+      && !event.shiftKey
+    if (needsSubmit && formRef.current) {
+      formRef.current.requestSubmit()
+    }
+  }, [])
 
   return (
     <div className="ChatInput">
-      <form onSubmit={handleSubmit}>
+      <form
+        ref={formRef}
+        onSubmit={handleSubmit}
+      >
         <textarea
+          ref={textAreaRef}
           name="message"
           disabled={requestStatus.loading}
           rows={4}
+          onKeyDown={handleKey}
         ></textarea>
         <button>✉️</button>
       </form>
