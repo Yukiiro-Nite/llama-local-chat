@@ -16,7 +16,10 @@ export interface ChatSettingsFormElements extends HTMLFormControlsCollection {
 export const ChatSettings = () => {
   const setView = useAppStore((state) => state.setView)
   const formRef = useRef<HTMLFormElement>(null)
-  const {chats, currentChatId, updateChatSettings} = useChatStore()
+  const {chats, currentChatId, updateChatSettings, clearChatHistory} = useChatStore()
+  const hasHistory = currentChatId
+    ? chats[currentChatId]?.chatHistory?.length > 0
+    : false
   const settings = useMemo(() => {
     return currentChatId
       ? chats[currentChatId]?.chatSettings
@@ -60,6 +63,13 @@ export const ChatSettings = () => {
     }
     updateChatSettings(currentChatId, { model })
   }, [currentChatId, updateChatSettings])
+
+  const clearHistory = useCallback(() => {
+    if (!currentChatId) {
+      return
+    }
+    clearChatHistory(currentChatId)
+  }, [clearChatHistory, currentChatId])
 
   return (
     <View
@@ -114,6 +124,14 @@ export const ChatSettings = () => {
             defaultValue={settings?.historyLength}
           ></input>
         </label>
+        <button
+          className="ClearHistoryButton"
+          type="button"
+          onClick={clearHistory}
+          disabled={!hasHistory}
+        >
+          🗑️ Clear History
+        </button>
       </form>
     </View>
   )

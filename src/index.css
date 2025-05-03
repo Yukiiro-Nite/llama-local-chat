@@ -2,6 +2,7 @@
   --bg: #000000;
   --fg: #ffffff;
   --accent: #cccccc;
+  --error: red;
 }
 
 body {

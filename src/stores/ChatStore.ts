@@ -38,6 +38,7 @@ export interface ChatStore {
   setCurrentChatId: (id: string) => void
   createNewChat: () => Chat
   appendChatHistory: (id: string, message: ChatMessage) => ChatMessage[]
+  clearChatHistory: (id: string) => void
   updateChatSettings: (id: string, settings: Partial<ChatSettingsData>) => void
   deleteChat: (id: string) => void
 }
@@ -93,6 +94,27 @@ export const useChatStore = create<ChatStore>()(
         })
 
         return newHistory
+      },
+      clearChatHistory: (id) => {
+        const state = get()
+        const nowStr = new Date().toISOString()
+        const chatToUpdate = state.chats[id]
+        if (!chatToUpdate) {
+          console.error('Chat with id does not exist: ', id)
+          return []
+        }
+
+        set({
+          ...state,
+          chats: {
+            ...state.chats,
+            [id]: {
+              ...chatToUpdate,
+              updatedAt: nowStr,
+              chatHistory: []
+            }
+          }
+        })
       },
       updateChatSettings: (id, settings) => {
         const state = get()

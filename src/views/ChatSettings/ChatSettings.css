@@ -42,11 +42,16 @@
   border: 1px solid var(--accent);
 }
 
-.ChatSettings form button {
-  border: 1px solid var(--accent);
+.ChatSettings form .ClearHistoryButton {
+  border: 1px solid var(--error);
   background-color: var(--bg);
   padding: 0.5rem 1.5rem;
-  font-size: 1.5rem;
+  font-size: 1rem;
   color: var(--fg);
   margin-top: 2rem;
+}
+
+.ChatSettings form .ClearHistoryButton:disabled {
+  filter: brightness(0.5);
+  border-color: var(--accent);
 }
