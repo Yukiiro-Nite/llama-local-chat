@@ -22,6 +22,7 @@ export const ChatInput = ({ chat }: ChatInputProps) => {
   const textAreaRef = useRef<HTMLTextAreaElement>(null)
   const [requestStatus, setRequestStatus] = useState<ChatRequestStatus>({loading: false})
   const appendChatHistory = useChatStore((state) => state.appendChatHistory)
+
   const handleSubmit = useCallback(async (event: FormEvent) => {
     event.preventDefault()
     const target = event.target as HTMLFormElement

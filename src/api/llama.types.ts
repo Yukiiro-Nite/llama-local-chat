@@ -6,6 +6,14 @@ export const ChatRoles: Record<ChatRoleType, ChatRoleType> = {
   system: 'system'
 }
 
+export type CapabilityType = 'completion' | 'vision' | 'tools'
+
+export const Capabilities: Record<CapabilityType, CapabilityType> = {
+  completion: 'completion',
+  vision: 'vision',
+  tools: 'tools',
+}
+
 export interface ChatHistoryMessage {
   role: ChatRoleType
   content: string
