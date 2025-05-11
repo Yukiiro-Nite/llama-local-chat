@@ -4,6 +4,7 @@
   width: 100%;
   padding: 0.5rem;
   background-color: var(--bg);
+  z-index: 2;
 }
 
 .ChatView header button {
@@ -19,7 +20,7 @@
 }
 
 .ChatView > ul {
-  padding: 90px 1rem;
+  padding: 115px 1rem;
   margin-top: 0;
   max-width: 35rem;
 }
