@@ -1,11 +1,14 @@
 import { FormEvent, KeyboardEvent, useCallback, useRef, useState } from "react"
 import { Chat, ChatMessage, useChatStore } from "../../stores/ChatStore"
 import "./ChatInput.css"
-import { ChatRoles } from "../../api/llama.types"
+import { ChatHistoryMessage, ChatRoles } from "../../api/llama.types"
 import { getChat } from "../../api/llama"
+import { FileInput } from "../FileInput/FileInput"
+import { filesToBase64, getBase64FromDataUrl } from "../../utils/fileInputUtils"
 
 interface ChatInputFormElements extends HTMLFormControlsCollection {
   message: HTMLTextAreaElement
+  files: HTMLInputElement
 }
 
 export interface ChatInputProps {
@@ -28,19 +31,29 @@ export const ChatInput = ({ chat }: ChatInputProps) => {
     const target = event.target as HTMLFormElement
     const elements = target.elements as ChatInputFormElements
     const message = elements.message.value
+    const files = await filesToBase64(elements.files)
 
     const newChat: ChatMessage = {
       role: ChatRoles.user,
       content: message,
       createdAt: new Date().toISOString()
     }
+    if (files.length > 0) {
+      newChat.images = files
+    }
     const chatHistory = appendChatHistory(chat.id, newChat)
     const settings = chat.chatSettings
-    const requestHistory = chatHistory
+    const requestHistory: ChatHistoryMessage[] = chatHistory
       .slice()
       .reverse()
       .slice(0, settings.historyLength)
-      .map(({role, content}) => ({role, content}))
+      .map(({role, content, images}) => {
+        const msg: ChatHistoryMessage = {role, content}
+        if (images && images.length > 0) {
+          msg.images = images.map(getBase64FromDataUrl)
+        }
+        return msg
+      })
       .reverse()
     
     if (settings.systemMessage) {
@@ -97,14 +110,17 @@ export const ChatInput = ({ chat }: ChatInputProps) => {
         ref={formRef}
         onSubmit={handleSubmit}
       >
-        <textarea
-          ref={textAreaRef}
-          name="message"
-          disabled={requestStatus.loading}
-          rows={4}
-          onKeyDown={handleKey}
-        ></textarea>
-        <button>✉️</button>
+        <div>
+          <textarea
+            ref={textAreaRef}
+            name="message"
+            disabled={requestStatus.loading}
+            rows={4}
+            onKeyDown={handleKey}
+          ></textarea>
+          <button>✉️</button>
+        </div>
+        <FileInput />
       </form>
     </div>
   )

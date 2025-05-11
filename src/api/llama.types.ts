@@ -17,6 +17,7 @@ export const Capabilities: Record<CapabilityType, CapabilityType> = {
 export interface ChatHistoryMessage {
   role: ChatRoleType
   content: string
+  images?: string[]
 }
 
 export interface ChatResponse {

@@ -1,7 +1,7 @@
 import { getModel, getModels } from "../api/llama"
-import { ModelLongData, ModelsResponse } from "../api/llama.types"
+import { CapabilityType, ModelLongData, ModelsResponse } from "../api/llama.types"
 import { defaultChatSettings, useChatStore } from "../stores/ChatStore"
-import { ModelStore } from "../stores/ModelStore"
+import { HostModels, ModelData, ModelStore } from "../stores/ModelStore"
 
 export const needsLoadingAfterHydrate = (state: ModelStore): boolean => {
   if (Object.values(state.modelsByHost).length === 0) return true
@@ -116,4 +116,28 @@ export const loadModels = async (state: ModelStore) => {
       loading: false,
     })
   }))
+}
+
+export const getModelData = (
+  modelsByHost: Record<string, HostModels>,
+  host: string | undefined,
+  model: string | undefined
+): ModelData | undefined => {
+  if (!host || !model) return undefined
+
+  return modelsByHost
+    ?.[host]
+    ?.models
+    ?.[model]
+}
+
+export const getModelCapabilities = (
+  modelsByHost: Record<string, HostModels>,
+  host: string | undefined,
+  model: string | undefined
+): CapabilityType[] => {
+  return getModelData(modelsByHost, host, model)
+    ?.long
+    ?.capabilities as CapabilityType[]
+    ?? []
 }

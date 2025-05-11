@@ -8,6 +8,7 @@ export interface ChatMessage {
   role: ChatRoleType
   content: string
   createdAt: string
+  images?: string[]
 }
 
 export interface ChatSettingsData {
