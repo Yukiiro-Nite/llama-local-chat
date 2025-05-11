@@ -16,12 +16,13 @@ export const FileInput = () => {
   const fileInputClasses = classNames('FileInput', { hide: !capabilities.includes(Capabilities.vision)})
 
   return (
-    <div className={fileInputClasses}>
+    <label className={fileInputClasses}>
+      <span>Images</span>
       <input
         type="file"
         name="files"
         accept="image/*"
       ></input>
-    </div>
+    </label>
   )
 }

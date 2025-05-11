@@ -41,6 +41,20 @@ export const ChatList = ({ chat }: ChatListProps) => {
         const messageTitle = outsideOfHistoryWindow
           ? `This message is out of the history window. Try changing the history length if you want to include this message.`
           : ""
+        const chatImages = msg.images?.length
+          ? (
+            <div className="ChatImages">
+              {
+                msg.images.map((dataUrl) => (
+                  <img
+                    src={dataUrl}
+                    alt="input image"
+                  ></img>
+                ))
+              }
+            </div>
+          )
+          : undefined
         return (
           <li
             key={`${chat.id}-${msg.createdAt}`}
@@ -50,6 +64,7 @@ export const ChatList = ({ chat }: ChatListProps) => {
             <h2>{title}</h2>
             <time>{createdAt}</time>
             <div className="ChatMsg">{contentMd}</div>
+            {chatImages}
           </li>
         )
       })}
