@@ -78,6 +78,7 @@ export const useModelStore = create<ModelStore>()(
           set({
             modelsByHost: {} as Record<string, HostModels>
           })
+          loadModels(get())
         },
         setHostLoading: (host, loading) => {
           const state = get()

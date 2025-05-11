@@ -44,7 +44,7 @@ export const ModelSelect = (props: ModelSelectProps) => {
           onChange={_setModel}
         >
           {
-            Object.values(hostModels.models ?? {})?.map((model) => {
+            Object.values(hostModels?.models ?? {})?.map((model) => {
               return (
                 <option
                   key={model.short.name}

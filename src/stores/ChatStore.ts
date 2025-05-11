@@ -1,6 +1,8 @@
 import { create } from 'zustand'
-import { persist } from 'zustand/middleware'
+import { persist, subscribeWithSelector } from 'zustand/middleware'
 import { ChatRoleType } from '../api/llama.types'
+import { loadModels } from '../utils/modelUtils'
+import { useModelStore } from './ModelStore'
 
 export interface ChatMessage {
   role: ChatRoleType
@@ -19,7 +21,7 @@ export interface ChatSettingsData {
 export const defaultChatSettings: ChatSettingsData = {
   title: 'New Chat',
   host: 'http://localhost:11434',
-  model: 'llama3.1',
+  model: 'llama3.1:latest',
   systemMessage: '',
   historyLength: 10
 }
@@ -43,7 +45,7 @@ export interface ChatStore {
   deleteChat: (id: string) => void
 }
 
-export const useChatStore = create<ChatStore>()(
+export const useChatStore = create<ChatStore>()(subscribeWithSelector(
   persist(
     (set, get) => ({
       chats: {},
@@ -158,4 +160,24 @@ export const useChatStore = create<ChatStore>()(
       name: 'llama-chat_ChatStore'
     }
   )
+))
+
+useChatStore.subscribe(
+  (state) => {return state.chats},
+  (
+    currentChats,
+    prevChats
+  ) => {
+    const hasUpdatedHost = Object.entries(currentChats).some(([id, chat]) => {
+      const prevChat = prevChats[id]
+      if (!prevChat) return true
+      if (prevChat.chatSettings.host !== chat.chatSettings.host) return true
+
+      return false
+    })
+
+    if (hasUpdatedHost) {
+      loadModels(useModelStore.getState())
+    }
+  }
 )
