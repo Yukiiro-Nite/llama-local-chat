@@ -3,6 +3,8 @@ import { persist, subscribeWithSelector } from 'zustand/middleware'
 import { ChatRoleType } from '../api/llama.types'
 import { loadModels } from '../utils/modelUtils'
 import { useModelStore } from './ModelStore'
+import { loadTools } from '../utils/toolUtils'
+import { useToolStore } from './ToolStore'
 
 export interface ChatMessage {
   role: ChatRoleType
@@ -181,8 +183,20 @@ useChatStore.subscribe(
       return false
     })
 
+    const hasUpdatedMcp = Object.entries(currentChats).some(([id, chat]) => {
+      const prevChat = prevChats[id]
+      if (!prevChat) return true
+      
+      return prevChat.chatSettings.useMcp !== chat.chatSettings.useMcp ||
+        prevChat.chatSettings.mcpHost !== chat.chatSettings.mcpHost
+    })
+
     if (hasUpdatedHost) {
       loadModels(useModelStore.getState())
+    }
+
+    if (hasUpdatedMcp) {
+      loadTools(useToolStore.getState())
     }
   }
 )
