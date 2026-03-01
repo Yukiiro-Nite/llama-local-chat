@@ -17,6 +17,8 @@ export interface ChatSettingsData {
   model: string
   systemMessage: string
   historyLength: number
+  useMcp: boolean
+  mcpHost: string
 }
 
 export const defaultChatSettings: ChatSettingsData = {
@@ -24,7 +26,9 @@ export const defaultChatSettings: ChatSettingsData = {
   host: 'http://localhost:11434',
   model: 'llama3.1:latest',
   systemMessage: '',
-  historyLength: 10
+  historyLength: 10,
+  useMcp: false,
+  mcpHost: ''
 }
 
 export interface Chat {
