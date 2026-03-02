@@ -1,11 +1,24 @@
+import { Tool } from "@modelcontextprotocol/sdk/types.js"
 import { ChatHistoryMessage, ChatResponse, ModelLongData, ModelsResponse } from "./llama.types"
+import { mcpToLlamaTool } from "../utils/toolUtils"
 
 export const getChat = async (
   host: string,
   model: string,
-  history: ChatHistoryMessage[]
+  history: ChatHistoryMessage[],
+  tools?: Tool[]
 ): Promise<ChatResponse> => {
   const path = `${host}/api/chat`
+  const reqBody: Record<string, any> = {
+    model: model,
+    stream: false,
+    messages: history
+  }
+
+  if (tools && tools.length > 0) {
+    reqBody.tools = tools.map(mcpToLlamaTool)
+  }
+
   const response = await fetch(
     path,
     {
@@ -14,11 +27,7 @@ export const getChat = async (
         'Content-Type': 'application/json',
         'Accept': 'application/json'
       },
-      body: JSON.stringify({
-        model: model,
-        stream: false,
-        messages: history
-      })
+      body: JSON.stringify(reqBody)
     }
   )
 

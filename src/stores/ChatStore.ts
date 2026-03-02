@@ -1,6 +1,6 @@
 import { create } from 'zustand'
 import { persist, subscribeWithSelector } from 'zustand/middleware'
-import { ChatRoleType } from '../api/llama.types'
+import { ChatRoleType, ToolCall } from '../api/llama.types'
 import { loadModels } from '../utils/modelUtils'
 import { useModelStore } from './ModelStore'
 import { loadTools } from '../utils/toolUtils'
@@ -11,6 +11,10 @@ export interface ChatMessage {
   content: string
   createdAt: string
   images?: string[]
+  thinking?: string
+  tool_calls?: ToolCall[]
+  tool_name?: string
+  id?: string
 }
 
 export interface ChatSettingsData {
@@ -46,7 +50,7 @@ export interface ChatStore {
   currentChatId?: string
   setCurrentChatId: (id: string) => void
   createNewChat: () => Chat
-  appendChatHistory: (id: string, message: ChatMessage) => ChatMessage[]
+  appendChatHistory: (id: string, message: ChatMessage | ChatMessage[]) => ChatMessage[]
   clearChatHistory: (id: string) => void
   updateChatSettings: (id: string, settings: Partial<ChatSettingsData>) => void
   deleteChat: (id: string) => void

@@ -2,6 +2,7 @@ import type { Tool } from '@modelcontextprotocol/sdk/types.js'
 import { ToolStore } from "../stores/ToolStore"
 import { useChatStore } from "../stores/ChatStore"
 import { getTools } from '../api/mcpClient'
+import { LlamaTool } from '../api/llama.types'
 
 export const needsLoadingAfterHydrate = (state: ToolStore): boolean => {
   if (Object.values(state.toolsByHost).length === 0) return true
@@ -45,4 +46,15 @@ export const loadTools = async (state: ToolStore) => {
 
     setTools(mcpHost, toolsResponse)
   }))
+}
+
+export const mcpToLlamaTool = (tool: Tool): LlamaTool => {
+  return {
+    type: 'function',
+    function: {
+      name: tool.name,
+      description: tool.description,
+      parameters: tool.inputSchema
+    }
+  }
 }

@@ -1,10 +1,12 @@
 import { FormEvent, KeyboardEvent, useCallback, useRef, useState } from "react"
-import { Chat, ChatMessage, useChatStore } from "../../stores/ChatStore"
+import { Chat, ChatMessage, ChatSettingsData, useChatStore } from "../../stores/ChatStore"
 import "./ChatInput.css"
-import { ChatHistoryMessage, ChatRoles } from "../../api/llama.types"
+import { ChatHistoryMessage, ChatRoles, ToolCall } from "../../api/llama.types"
 import { getChat } from "../../api/llama"
 import { FileInput } from "../FileInput/FileInput"
 import { filesToBase64, getBase64FromDataUrl } from "../../utils/fileInputUtils"
+import { useToolStore } from "../../stores/ToolStore"
+import { callTools } from "../../api/mcpClient"
 
 interface ChatInputFormElements extends HTMLFormControlsCollection {
   message: HTMLTextAreaElement
@@ -25,36 +27,29 @@ export const ChatInput = ({ chat }: ChatInputProps) => {
   const textAreaRef = useRef<HTMLTextAreaElement>(null)
   const [requestStatus, setRequestStatus] = useState<ChatRequestStatus>({loading: false})
   const appendChatHistory = useChatStore((state) => state.appendChatHistory)
+  const toolsByHost = useToolStore((state) => state.toolsByHost)
 
-  const handleSubmit = useCallback(async (event: FormEvent) => {
-    event.preventDefault()
-    const target = event.target as HTMLFormElement
-    const elements = target.elements as ChatInputFormElements
-    const message = elements.message.value
-    const files = await filesToBase64(elements.files)
-
-    const newChat: ChatMessage = {
-      role: ChatRoles.user,
-      content: message,
-      createdAt: new Date().toISOString()
-    }
-    if (files.length > 0) {
-      newChat.images = files
-    }
-    const chatHistory = appendChatHistory(chat.id, newChat)
-    const settings = chat.chatSettings
-    const requestHistory: ChatHistoryMessage[] = chatHistory
+  const getNewChat = useCallback(async (history: ChatMessage[], settings: ChatSettingsData) => {
+    const requestHistory: ChatHistoryMessage[] = history
       .slice()
       .reverse()
       .slice(0, settings.historyLength)
-      .map(({role, content, images}) => {
+      .map(({role, content, images, tool_calls, tool_name, id}) => {
         const msg: ChatHistoryMessage = {role, content}
         if (images && images.length > 0) {
           msg.images = images.map(getBase64FromDataUrl)
         }
+        if (tool_calls && tool_calls.length > 0) {
+          msg.tool_calls = tool_calls
+        }
+        if (tool_name && id) {
+          msg.tool_name = tool_name
+          msg.id = id
+        }
         return msg
       })
       .reverse()
+    const hostTools = toolsByHost[settings.mcpHost] || []
     
     if (settings.systemMessage) {
       requestHistory.unshift({
@@ -69,7 +64,10 @@ export const ChatInput = ({ chat }: ChatInputProps) => {
       chatResponse = await getChat(
         settings.host,
         settings.model,
-        requestHistory
+        requestHistory,
+        settings.useMcp
+          ? hostTools.tools
+          : undefined
       )
     } catch (res) {
       const response = res as Response
@@ -89,11 +87,53 @@ export const ChatInput = ({ chat }: ChatInputProps) => {
     appendChatHistory(chat.id, {
       role: responseMessage.role,
       content: responseMessage.content,
-      createdAt: new Date().toISOString()
+      createdAt: new Date().toISOString(),
+      thinking: responseMessage.thinking,
+      tool_calls: responseMessage.tool_calls
     })
-    setRequestStatus({ loading: false, error: undefined })
+    
+    if (responseMessage.tool_calls && responseMessage.tool_calls.length > 0) {
+      await handleToolCalls(responseMessage.tool_calls)
+    } else {
+      setRequestStatus({ loading: false, error: undefined })
+    }
+  }, [])
+
+  const handleSubmit = useCallback(async (event: FormEvent) => {
+    event.preventDefault()
+    const target = event.target as HTMLFormElement
+    const elements = target.elements as ChatInputFormElements
+    const message = elements.message.value
+    const files = await filesToBase64(elements.files)
+
+    const newChat: ChatMessage = {
+      role: ChatRoles.user,
+      content: message,
+      createdAt: new Date().toISOString()
+    }
+    if (files.length > 0) {
+      newChat.images = files
+    }
+    const chatHistory = appendChatHistory(chat.id, newChat)
+    const settings = chat.chatSettings
+    
+    await getNewChat(chatHistory, settings)
+
     target.reset()
     setTimeout(() => textAreaRef.current?.focus())
+  }, [appendChatHistory, chat.chatSettings, chat.id])
+
+  const handleToolCalls = useCallback(async (toolCalls: ToolCall[]) => {
+    const toolResponses = await callTools(chat.chatSettings.mcpHost, toolCalls)
+    const chatHistory = appendChatHistory(chat.id, toolResponses.map((toolResponse) => ({
+      role: 'tool',
+      tool_name: toolResponse.tool_name,
+      id: toolResponse.id,
+      content: toolResponse.content,
+      createdAt: new Date().toISOString()
+    })))
+
+    await getNewChat(chatHistory, chat.chatSettings)
   }, [appendChatHistory, chat.chatSettings, chat.id])
 
   const handleKey = useCallback((event: KeyboardEvent) => {

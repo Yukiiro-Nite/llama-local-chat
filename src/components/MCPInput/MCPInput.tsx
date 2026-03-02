@@ -31,14 +31,14 @@ export const MCPInput = (props: MCPInputProps) => {
         <input
           type="checkbox"
           name="useMcp"
-          checked={useMcp}
+          defaultChecked={useMcp}
         />
       </label>
       <label>
         <span>MCP Host</span>
         <input
           name="mcpHost"
-          value={mcpHost}
+          defaultValue={mcpHost}
         ></input>
       </label>
     </div>

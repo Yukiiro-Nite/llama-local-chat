@@ -12,7 +12,8 @@ export interface ChatListProps {
 const roleTitles: Record<ChatRoleType, (chat: Chat) => string> = {
   'user': () => 'You',
   'assistant': (chat) => `Agent ${chat.chatSettings.model}`,
-  'system': () => 'System'
+  'system': () => 'System',
+  'tool': () => 'Tool'
 }
 
 export const ChatList = ({ chat }: ChatListProps) => {
