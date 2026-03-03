@@ -1,0 +1,7 @@
+.MCPInput.hide {
+  display: none;
+}
+
+.MCPInput .RefreshButton {
+  margin-left: 1rem;
+}

@@ -4,13 +4,16 @@ import { AppViews, useAppStore } from "../../stores/AppStore"
 import { useChatStore } from "../../stores/ChatStore"
 import "./ChatSettings.css"
 import { ModelSelect } from "../../components/ModelSelect/ModelSelect"
+import { MCPInput } from "../../components/MCPInput/MCPInput"
 
 export interface ChatSettingsFormElements extends HTMLFormControlsCollection {
   title: HTMLInputElement
   host: HTMLInputElement
   model: HTMLInputElement
   systemMessage: HTMLTextAreaElement
-  historyLength: HTMLInputElement
+  historyLength: HTMLInputElement,
+  useMcp: HTMLInputElement,
+  mcpHost: HTMLInputElement
 }
 
 export const ChatSettings = () => {
@@ -44,7 +47,9 @@ export const ChatSettings = () => {
       host: elements.host.value,
       model: elements.model.value,
       systemMessage: elements.systemMessage.value,
-      historyLength: parseInt(elements.historyLength.value)
+      historyLength: parseInt(elements.historyLength.value),
+      useMcp: elements.useMcp.checked,
+      mcpHost: elements.mcpHost.value
     }
 
     updateChatSettings(currentChatId, settingsUpdate)
@@ -103,11 +108,6 @@ export const ChatSettings = () => {
             defaultValue={settings?.host}
           ></input>
         </label>
-        <ModelSelect
-          modelSetting={settings?.model}
-          hostSetting={settings?.host}
-          setModel={handleSetModel}
-        ></ModelSelect>
         <label>
           <span>System Message</span>
           <textarea
@@ -124,6 +124,15 @@ export const ChatSettings = () => {
             defaultValue={settings?.historyLength}
           ></input>
         </label>
+        <ModelSelect
+          modelSetting={settings?.model}
+          hostSetting={settings?.host}
+          setModel={handleSetModel}
+        ></ModelSelect>
+        <MCPInput
+          useMcp={settings?.useMcp}
+          mcpHost={settings?.mcpHost}
+        ></MCPInput>
         <button
           className="ClearHistoryButton"
           type="button"

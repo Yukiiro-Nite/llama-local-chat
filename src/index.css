@@ -3,6 +3,8 @@
   --fg: #ffffff;
   --accent: #cccccc;
   --error: red;
+  --accent-bg: #222222;
+  --accent-fg: #888888;
 }
 
 body {

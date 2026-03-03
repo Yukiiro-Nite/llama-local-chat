@@ -1,14 +1,20 @@
 import { create } from 'zustand'
 import { persist, subscribeWithSelector } from 'zustand/middleware'
-import { ChatRoleType } from '../api/llama.types'
+import { ChatRoleType, ToolCall } from '../api/llama.types'
 import { loadModels } from '../utils/modelUtils'
 import { useModelStore } from './ModelStore'
+import { loadTools } from '../utils/toolUtils'
+import { useToolStore } from './ToolStore'
 
 export interface ChatMessage {
   role: ChatRoleType
   content: string
   createdAt: string
   images?: string[]
+  thinking?: string
+  tool_calls?: ToolCall[]
+  tool_name?: string
+  id?: string
 }
 
 export interface ChatSettingsData {
@@ -17,6 +23,8 @@ export interface ChatSettingsData {
   model: string
   systemMessage: string
   historyLength: number
+  useMcp: boolean
+  mcpHost: string
 }
 
 export const defaultChatSettings: ChatSettingsData = {
@@ -24,7 +32,9 @@ export const defaultChatSettings: ChatSettingsData = {
   host: 'http://localhost:11434',
   model: 'llama3.1:latest',
   systemMessage: '',
-  historyLength: 10
+  historyLength: 10,
+  useMcp: false,
+  mcpHost: ''
 }
 
 export interface Chat {
@@ -40,7 +50,7 @@ export interface ChatStore {
   currentChatId?: string
   setCurrentChatId: (id: string) => void
   createNewChat: () => Chat
-  appendChatHistory: (id: string, message: ChatMessage) => ChatMessage[]
+  appendChatHistory: (id: string, message: ChatMessage | ChatMessage[]) => ChatMessage[]
   clearChatHistory: (id: string) => void
   updateChatSettings: (id: string, settings: Partial<ChatSettingsData>) => void
   deleteChat: (id: string) => void
@@ -177,8 +187,20 @@ useChatStore.subscribe(
       return false
     })
 
+    const hasUpdatedMcp = Object.entries(currentChats).some(([id, chat]) => {
+      const prevChat = prevChats[id]
+      if (!prevChat) return true
+      
+      return prevChat.chatSettings.useMcp !== chat.chatSettings.useMcp ||
+        prevChat.chatSettings.mcpHost !== chat.chatSettings.mcpHost
+    })
+
     if (hasUpdatedHost) {
       loadModels(useModelStore.getState())
+    }
+
+    if (hasUpdatedMcp) {
+      loadTools(useToolStore.getState())
     }
   }
 )

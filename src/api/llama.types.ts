@@ -1,9 +1,10 @@
-export type ChatRoleType = 'user' | 'assistant' | 'system'
+export type ChatRoleType = 'user' | 'assistant' | 'system' | 'tool'
 
 export const ChatRoles: Record<ChatRoleType, ChatRoleType> = {
   user: 'user',
   assistant: 'assistant',
-  system: 'system'
+  system: 'system',
+  tool: 'tool'
 }
 
 export type CapabilityType = 'completion' | 'vision' | 'tools'
@@ -14,10 +15,23 @@ export const Capabilities: Record<CapabilityType, CapabilityType> = {
   tools: 'tools',
 }
 
+export interface ToolCall {
+  id: string
+  function: {
+    index: number
+    name: string
+    arguments?: Record<string, any>
+  }
+}
+
 export interface ChatHistoryMessage {
   role: ChatRoleType
   content: string
   images?: string[]
+  thinking?: string
+  tool_calls?: ToolCall[]
+  tool_name?: string
+  id?: string
 }
 
 export interface ChatResponse {
@@ -84,3 +98,15 @@ export interface ModelsResponse {
   models: ModelShortData[]
 }
 
+export interface LlamaTool {
+  type: 'function'
+  function: {
+    name: string
+    description?: string
+    parameters: {
+      type: 'object',
+      required?: string[],
+      properties?: { [x: string]: object }
+    }
+  }
+}
