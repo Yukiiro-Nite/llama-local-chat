@@ -13,7 +13,7 @@ const roleTitles: Record<ChatRoleType, (chat: Chat) => string> = {
   'user': () => 'You',
   'assistant': (chat) => `Agent ${chat.chatSettings.model}`,
   'system': () => 'System',
-  'tool': () => 'Tool'
+  'tool': () => 'Tool Response'
 }
 
 export const ChatList = ({ chat }: ChatListProps) => {
@@ -37,7 +37,10 @@ export const ChatList = ({ chat }: ChatListProps) => {
         const contentMd = compiler(msg.content, { wrapper: null })
         const outsideOfHistoryWindow = (chat.chatHistory.length - index) > chat.chatSettings.historyLength
         const chatMessageClasses = classNames("ChatMessage", {
-          "excludeHistory": outsideOfHistoryWindow
+          "excludeHistory": outsideOfHistoryWindow,
+          [msg.role]: true,
+          "toolCall": !!msg.tool_calls,
+          "thinking": !!msg.thinking
         })
         const messageTitle = outsideOfHistoryWindow
           ? `This message is out of the history window. Try changing the history length if you want to include this message.`
@@ -64,6 +67,33 @@ export const ChatList = ({ chat }: ChatListProps) => {
           >
             <h2>{title}</h2>
             <time>{createdAt}</time>
+            <details className="Thinking">
+              <summary>Thinking</summary>
+              <pre>
+              {msg.thinking}
+              </pre>
+            </details>
+            <details className="ToolCall">
+              <summary>Tool Call</summary>
+              <dl className="calls">
+                {msg.tool_calls?.map((call) => (
+                  <>
+                    <dt>{call.function.name}{`(`}</dt>
+                    <dd>
+                      {
+                        Object.entries(call.function.arguments ?? []).map(([argName, argValue]) => (
+                          <>
+                            <dt>{argName} = <span>{JSON.stringify(argValue, null, 2)}</span></dt>
+                          </>
+                        ))
+                      }
+                    </dd>
+                    <span>{`)`}</span>
+                  </>
+                ))}
+                <dt></dt>
+              </dl>
+            </details>
             <div className="ChatMsg">{contentMd}</div>
             {chatImages}
           </li>

@@ -11,3 +11,55 @@
   max-width: 8rem;
   max-height: 8rem;
 }
+
+.ChatMessage .Thinking {
+  display: none;
+  font-size: 0.75rem;
+  color: var(--accent-fg);
+}
+
+.ChatMessage .Thinking pre {
+  margin: 0 0 0 0.5rem;
+  padding: 0.5rem;
+  white-space: pre-line;
+  background-color: var(--accent-bg);
+  color: var(--accent-fg);
+}
+
+.ChatMessage.thinking .Thinking {
+  display: block;
+}
+
+.ChatMessage .ToolCall {
+  display: none;
+  font-size: 0.75rem;
+  color: var(--accent-fg);
+}
+
+.ChatMessage .ToolCall .calls {
+  margin: 0 0 0 0.5rem;
+  padding: 0.5rem;
+  background-color: var(--accent-bg);
+  color: var(--accent-fg);
+}
+
+.ChatMessage.assistant.toolCall h2 {
+  font-size: 1rem;
+}
+
+.ChatMessage.toolCall .ToolCall {
+  display: block;
+}
+
+.ChatMessage .ToolCall .calls pre {
+  margin: 0;
+}
+
+.ChatMessage .ToolCall .calls dd {
+  margin-left: 0.5rem;
+}
+
+.ChatMessage.tool h2 {
+  font-size: 1rem;
+  margin-top: 0.75rem;
+}
