@@ -5,6 +5,7 @@ import { useModelStore } from "../../stores/ModelStore"
 import { getHost, getSelectedModel } from "../../utils/chatUtils"
 import { getModelCapabilities } from "../../utils/modelUtils"
 import "./MCPInput.css"
+import { useToolStore } from "../../stores/ToolStore"
 
 export interface MCPInputProps {
   useMcp?: boolean
@@ -19,6 +20,7 @@ export const MCPInput = (props: MCPInputProps) => {
   const chats = useChatStore(chatState => chatState.chats)
   const currentChatId = useChatStore(chatState => chatState.currentChatId)
   const modelsByHost = useModelStore(modelState => modelState.modelsByHost)
+  const reloadTools = useToolStore(toolState => toolState.reloadTools)
   const host = getHost(chats, currentChatId)
   const selectedModel = getSelectedModel(chats, currentChatId)
   const capabilities = getModelCapabilities(modelsByHost, host, selectedModel)
@@ -36,10 +38,17 @@ export const MCPInput = (props: MCPInputProps) => {
       </label>
       <label>
         <span>MCP Host</span>
-        <input
-          name="mcpHost"
-          defaultValue={mcpHost}
-        ></input>
+        <div>
+          <input
+            name="mcpHost"
+            defaultValue={mcpHost}
+          ></input>
+          <button
+            className="RefreshButton"
+            type="button"
+            onClick={reloadTools}
+          >🔁</button>
+        </div>
       </label>
     </div>
   )
