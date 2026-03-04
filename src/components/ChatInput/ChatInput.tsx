@@ -97,7 +97,7 @@ export const ChatInput = ({ chat }: ChatInputProps) => {
     } else {
       setRequestStatus({ loading: false, error: undefined })
     }
-  }, [])
+  }, [appendChatHistory, chat.chatSettings, chat.id])
 
   const handleSubmit = useCallback(async (event: FormEvent) => {
     event.preventDefault()
